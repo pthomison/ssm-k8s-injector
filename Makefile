@@ -3,7 +3,10 @@ tidy:
 	go mod tidy
 
 run: build
-	./dist/ssm-k8s-injector_darwin_arm64/ssm-k8s-injector
+	./dist/ssm-k8s-injector_darwin_arm64/ssm-k8s-injector \
+		--ssm-parameter "/placeholder"\
+		--k8s-secret "test-secret"
+	kubectl delete secret test-secret -n default
 
 build:
 	goreleaser build --snapshot --rm-dist --single-target
