@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"path/filepath"
 
 	utils "github.com/pthomison/golang-utils"
@@ -45,11 +43,15 @@ func run(cmd *cobra.Command, args []string) {
 	utils.Check(err)
 
 	sec := make(utils.Secret)
-
 	sec[filepath.Base(SSMparameter)] = []byte(value)
 
-	_, err = utils.ApplySecret(cs, K8Ssecret, K8Snamespace, sec)
-	utils.Check(err)
+	_, err = utils.GetSecret(cs, K8Ssecret, K8Snamespace)
 
-	fmt.Println(value)
+	if err != nil {
+		_, err = utils.ApplySecret(cs, K8Ssecret, K8Snamespace, sec)
+		utils.Check(err)
+	} else {
+		_, err = utils.UpdateSecret(cs, K8Ssecret, K8Snamespace, sec)
+		utils.Check(err)
+	}
 }

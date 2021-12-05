@@ -6,6 +6,12 @@ run: build
 	./dist/ssm-k8s-injector_darwin_arm64/ssm-k8s-injector \
 		--ssm-parameter "/placeholder"\
 		--k8s-secret "test-secret"
+	./dist/ssm-k8s-injector_darwin_arm64/ssm-k8s-injector \
+		--ssm-parameter "/placeholder1"\
+		--k8s-secret "test-secret"
+	./dist/ssm-k8s-injector_darwin_arm64/ssm-k8s-injector \
+		--ssm-parameter "/placeholder2"\
+		--k8s-secret "test-secret"
 	kubectl delete secret test-secret -n default
 
 build:
