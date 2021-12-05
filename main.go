@@ -8,8 +8,10 @@ import (
 )
 
 var (
-	message string
-	name    string
+	SSMparameter string
+	K8Ssecret    string
+	K8Snamespace string
+	AWSRegion    string
 
 	rootCmd = &cobra.Command{
 		Use:   "ssm-k8s-injector",
@@ -20,8 +22,10 @@ var (
 
 func main() {
 
-	rootCmd.PersistentFlags().StringVarP(&message, "message", "m", "hello world", "message the program will output")
-	rootCmd.PersistentFlags().StringVarP(&name, "name", "n", "patrick", "name the program will output to")
+	rootCmd.PersistentFlags().StringVarP(&SSMparameter, "ssm-parameter", "p", "", "Parameter to inject")
+	rootCmd.PersistentFlags().StringVarP(&AWSRegion, "aws-region", "r", "us-east-2", "")
+	rootCmd.PersistentFlags().StringVarP(&K8Ssecret, "k8s-secret", "s", "", "Secret to inject into")
+	rootCmd.PersistentFlags().StringVarP(&K8Snamespace, "k8s-namespace", "n", "default", "Namespace of the secret")
 
 	err := rootCmd.Execute()
 
@@ -29,5 +33,8 @@ func main() {
 }
 
 func run(cmd *cobra.Command, args []string) {
-	fmt.Println(message + ", " + name)
+	value, err := utils.AWSGetParameter(SSMparameter, AWSRegion)
+	utils.Check(err)
+
+	fmt.Println(value)
 }
