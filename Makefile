@@ -18,4 +18,7 @@ build:
 	goreleaser build --snapshot --rm-dist --single-target
 
 clean:
-	rm -rf ./dist	
+	rm -rf ./dist
+
+release:
+	goreleaser release --rm-dist
