@@ -5,14 +5,16 @@ tidy:
 run: build
 	./dist/ssm-k8s-injector_darwin_arm64/ssm-k8s-injector \
 		--ssm-parameter "/placeholder"\
-		--k8s-secret "test-secret"
+		--secret-name "test-secret" \
+		--secret-key "placeholderKeyTest"
 	./dist/ssm-k8s-injector_darwin_arm64/ssm-k8s-injector \
 		--ssm-parameter "/placeholder1"\
-		--k8s-secret "test-secret"
+		--secret-name "test-secret"
 	./dist/ssm-k8s-injector_darwin_arm64/ssm-k8s-injector \
 		--ssm-parameter "/placeholder2"\
-		--k8s-secret "test-secret"
-	kubectl delete secret test-secret -n default
+		--secret-name "test-secret" \
+		--secret-key "placeholderKeyTwoTest"
+# 	kubectl delete secret test-secret -n default
 
 build:
 	goreleaser build --snapshot --rm-dist --single-target

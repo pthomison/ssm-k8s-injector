@@ -9,7 +9,8 @@ import (
 
 var (
 	SSMparameter string
-	K8Ssecret    string
+	SecretName   string
+	SecretKey    string
 	K8Snamespace string
 	AWSRegion    string
 
@@ -24,11 +25,12 @@ func main() {
 
 	rootCmd.PersistentFlags().StringVarP(&SSMparameter, "ssm-parameter", "p", "", "Parameter to inject")
 	rootCmd.PersistentFlags().StringVarP(&AWSRegion, "aws-region", "r", "us-east-2", "")
-	rootCmd.PersistentFlags().StringVarP(&K8Ssecret, "k8s-secret", "s", "", "Secret to inject into")
+	rootCmd.PersistentFlags().StringVarP(&SecretName, "secret-name", "s", "", "Secret to inject into")
+	rootCmd.PersistentFlags().StringVarP(&SecretKey, "secret-key", "k", "", "Secret to inject into")
 	rootCmd.PersistentFlags().StringVarP(&K8Snamespace, "k8s-namespace", "n", "default", "Namespace of the secret")
 
 	rootCmd.MarkPersistentFlagRequired("ssm-parameter")
-	rootCmd.MarkPersistentFlagRequired("k8s-secret")
+	rootCmd.MarkPersistentFlagRequired("secret-name")
 
 	err := rootCmd.Execute()
 
@@ -42,16 +44,20 @@ func run(cmd *cobra.Command, args []string) {
 	cs, err := utils.GetClientSet()
 	utils.Check(err)
 
-	sec := make(utils.Secret)
-	sec[filepath.Base(SSMparameter)] = []byte(value)
+	if SecretKey == "" {
+		SecretKey = filepath.Base(SSMparameter)
+	}
 
-	_, err = utils.GetSecret(cs, K8Ssecret, K8Snamespace)
+	sec := make(utils.Secret)
+	sec[SecretKey] = []byte(value)
+
+	_, err = utils.GetSecret(cs, SecretName, K8Snamespace)
 
 	if err != nil {
-		_, err = utils.ApplySecret(cs, K8Ssecret, K8Snamespace, sec)
+		_, err = utils.ApplySecret(cs, SecretName, K8Snamespace, sec)
 		utils.Check(err)
 	} else {
-		_, err = utils.UpdateSecret(cs, K8Ssecret, K8Snamespace, sec)
+		_, err = utils.UpdateSecret(cs, SecretName, K8Snamespace, sec)
 		utils.Check(err)
 	}
 }
