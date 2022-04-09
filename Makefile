@@ -17,7 +17,7 @@ run: build
 # 	kubectl delete secret test-secret -n default
 
 build:
-	goreleaser build --snapshot --rm-dist --single-target
+	GOPRIVATE=github.com/pthomison/golang-utils goreleaser build --snapshot --rm-dist --single-target
 
 clean:
 	rm -rf ./dist
